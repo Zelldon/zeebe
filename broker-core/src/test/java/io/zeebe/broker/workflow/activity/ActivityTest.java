@@ -27,6 +27,7 @@ import io.zeebe.exporter.record.value.TimerRecordValue;
 import io.zeebe.exporter.record.value.WorkflowInstanceRecordValue;
 import io.zeebe.model.bpmn.Bpmn;
 import io.zeebe.model.bpmn.BpmnModelInstance;
+import io.zeebe.protocol.intent.DeploymentIntent;
 import io.zeebe.protocol.intent.JobIntent;
 import io.zeebe.protocol.intent.TimerIntent;
 import io.zeebe.protocol.intent.WorkflowInstanceIntent;
@@ -165,6 +166,35 @@ public class ActivityTest {
     // then
     shouldUnsubscribeFromBoundaryEventTrigger(
         WorkflowInstanceIntent.ELEMENT_TERMINATING, WorkflowInstanceIntent.ELEMENT_TERMINATED);
+  }
+
+  @Test
+  public void shouldIgnoreTaskHeadersIfEmptyOrNull() {
+    // given
+    final BpmnModelInstance model =
+        Bpmn.createExecutableProcess("process")
+            .startEvent("start")
+            .serviceTask("task1", b -> b.zeebeTaskType("type1").zeebeTaskHeader("", ""))
+            .endEvent("end")
+            .moveToActivity("task1")
+            .serviceTask("task2", b -> b.zeebeTaskType("type2").zeebeTaskHeader(null, null))
+            .connectTo("end")
+            .done();
+    final long deploymentKey = testClient.deploy(model);
+    testClient.receiveFirstDeploymentEvent(DeploymentIntent.CREATED, deploymentKey);
+
+    // when
+    testClient.createWorkflowInstance("process");
+
+    // then
+    final JobRecordValue firstJob =
+        testClient.receiveJobs().withType("type1").getFirst().getValue();
+    assertThat(firstJob.getCustomHeaders()).isEmpty();
+    testClient.completeJobOfType("type1");
+
+    final JobRecordValue secondJob =
+        testClient.receiveJobs().withType("type2").getFirst().getValue();
+    assertThat(secondJob.getCustomHeaders()).isEmpty();
   }
 
   private void shouldUnsubscribeFromBoundaryEventTrigger(
