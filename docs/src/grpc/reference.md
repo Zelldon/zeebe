@@ -87,7 +87,7 @@ message ActivatedJob {
   string type = 2;
   // a set of headers tying the job to a workflow instance/task instance
   JobHeaders jobHeaders = 3;
-  // a set of custom headers defined during modelling; currently returned as a serialized
+  // a set of custom headers defined during modelling; returned as a serialized
   // JSON document
   string customHeaders = 4;
   // the name of the worker which activated this job
@@ -463,7 +463,7 @@ message WorkflowMetadata {
   // the assigned key, which acts as a unique identifier for this workflow
   int64 workflowKey = 3;
   // the resource name (see: WorkflowRequestObject.name) from which this workflow was
-  / /parsed
+  //parsed
   string resourceName = 4;
 }
 ```
@@ -585,7 +585,7 @@ message BrokerInfo {
 }
 
 message Partition {
-  // Describes the currently Raft role of the broker for a given partition
+  // Describes the Raft role of the broker for a given partition
   enum PartitionBrokerRole {
     LEADER = 0;
     FOLLOWER = 1;

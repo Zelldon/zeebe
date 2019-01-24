@@ -1,8 +1,9 @@
 # gRPC in Zeebe
 
-Zeebe uses gRPC for external client to server communication, and clients connect to brokers via a stateless gateway.
-The client protocol is defined using Protocol Buffers v3 (proto3), which you can find in the
-[main Zeebe repository](https://github.com/zeebe-io/zeebe/tree/develop/gateway-protocol)
+Zeebe clients connect to brokers via a stateless gateway. For the communication
+between client and gateway gRPC is used. The communication protocol is defined using
+Protocol Buffers v3 (proto3), and you can find it in the
+[Zeebe repository](https://github.com/zeebe-io/zeebe/tree/develop/gateway-protocol).
 
 
 ## What is gRPC?
@@ -24,4 +25,5 @@ At the moment, Zeebe officially supports two gRPC clients: one in [Java](java-cl
 If Zeebe does not provide an officially-supported client in your target language, you can read the official [Quick Start](https://grpc.io/docs/quickstart/) page to find out how
 to create a very basic one.
 
-In addition to this, a [blog post](https://zeebe.io/blog/2018/11/grpc-generating-a-zeebe-python-client/) was already published with a short tutorial on how to write one for Python.
+You can find a list of existing clients in the [Awesome Zeebe repository](https://github.com/zeebe-io/awesome-zeebe#clients).
+Additionally, a [blog post](https://zeebe.io/blog/2018/11/grpc-generating-a-zeebe-python-client/) was published with a short tutorial on how to write a new client from scratch in Python.

@@ -8,8 +8,6 @@ option go_package = "pb";
 // For a more complete documentation, refer to Zeebe documentation at:
 // https://docs.zeebe.io/grpc/reference.html
 
-// ActiveJobs
-
 message ActivateJobsRequest {
   // the job type, as defined in the BPMN process (e.g. <zeebe:taskDefinition
   // type="payment-service" />)
@@ -38,7 +36,7 @@ message ActivatedJob {
   string type = 2;
   // a set of headers tying the job to a workflow instance/task instance
   JobHeaders jobHeaders = 3;
-  // a set of custom headers defined during modelling; currently returned as a serialized
+  // a set of custom headers defined during modelling; returned as a serialized
   // JSON document
   string customHeaders = 4;
   // the name of the worker which activated this job
@@ -68,8 +66,6 @@ message JobHeaders {
   int64 elementInstanceKey = 6;
 }
 
-// CancelWorkflowInstance
-
 message CancelWorkflowInstanceRequest {
   // the workflow instance key (as, for example, obtained from
   // CreateWorkflowInstanceResponse)
@@ -78,8 +74,6 @@ message CancelWorkflowInstanceRequest {
 
 message CancelWorkflowInstanceResponse {
 }
-
-// CompleteJob
 
 message CompleteJobRequest {
   // the unique job identifier, as obtained from ActivateJobsResponse
@@ -90,8 +84,6 @@ message CompleteJobRequest {
 
 message CompleteJobResponse {
 }
-
-// CreateWorkflowInstance
 
 message CreateWorkflowInstanceRequest {
   // the unique key identifying the workflow definition (e.g. returned from a workflow
@@ -121,8 +113,6 @@ message CreateWorkflowInstanceResponse {
   // needs a workflow instance key (e.g. CancelWorkflowInstanceRequest)
   int64 workflowInstanceKey = 5;
 }
-
-// DeployWorkflow
 
 message DeployWorkflowRequest {
   // List of workflow resources to deploy
@@ -167,8 +157,6 @@ message WorkflowMetadata {
   string resourceName = 4;
 }
 
-// FailJob
-
 message FailJobRequest {
   // the unique job identifier, as obtained when activating the job
   int64 jobKey = 1;
@@ -182,8 +170,6 @@ message FailJobRequest {
 
 message FailJobResponse {
 }
-
-// GetWorkflow
 
 message GetWorkflowRequest {
   // the unique key identifying the workflow definition (e.g. returned from a workflow in
@@ -209,8 +195,6 @@ message GetWorkflowResponse {
   string bpmnXml = 5;
 }
 
-// ListWorkflows
-
 message ListWorkflowsRequest {
   // optional filter: if specified, only the workflows with this given process ID will be
   // returned
@@ -221,8 +205,6 @@ message ListWorkflowsResponse {
   // a list of deployed workflows matching the request criteria (if any)
   repeated WorkflowMetadata workflows = 1;
 }
-
-// PublishMessage
 
 message PublishMessageRequest {
   // the name of the message
@@ -242,8 +224,6 @@ message PublishMessageRequest {
 message PublishMessageResponse {
 }
 
-// ResolveIncident
-
 message ResolveIncidentRequest {
   // the unique ID of the incident to resolve
   int64 incidentKey = 1;
@@ -251,8 +231,6 @@ message ResolveIncidentRequest {
 
 message ResolveIncidentResponse {
 }
-
-// Topology
 
 message TopologyRequest {
 }
@@ -279,7 +257,7 @@ message BrokerInfo {
 }
 
 message Partition {
-  // Describes the currently Raft role of the broker for a given partition
+  // Describes the Raft role of the broker for a given partition
   enum PartitionBrokerRole {
     LEADER = 0;
     FOLLOWER = 1;
@@ -291,8 +269,6 @@ message Partition {
   PartitionBrokerRole role = 3;
 }
 
-// UpdateJobRetries
-
 message UpdateJobRetriesRequest {
   // the unique job identifier, as obtained through ActivateJobs
   int64 jobKey = 1;
@@ -302,8 +278,6 @@ message UpdateJobRetriesRequest {
 
 message UpdateJobRetriesResponse {
 }
-
-// UpdateWorkflowInstancePayload
 
 message UpdateWorkflowInstancePayloadRequest {
   // the unique identifier of a particular element; can be the workflow instance key (as
