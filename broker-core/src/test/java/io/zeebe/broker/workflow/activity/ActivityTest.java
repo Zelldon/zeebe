@@ -169,21 +169,34 @@ public class ActivityTest {
   }
 
   @Test
-  public void shouldIgnoreTaskHeadersIfEmptyOrNull() {
+  public void shouldIgnoreTaskHeadersIfEmpty() {
+    createWorkflowAndAssertIgnoredHeaders("");
+  }
+
+  @Test
+  public void shouldIgnoreTaskHeadersIfNull() {
+    createWorkflowAndAssertIgnoredHeaders(null);
+  }
+
+  private void createWorkflowAndAssertIgnoredHeaders(String testValue) {
     // given
     final BpmnModelInstance model =
         Bpmn.createExecutableProcess("process")
             .startEvent("start")
-            .serviceTask("task1", b -> b.zeebeTaskType("type1").zeebeTaskHeader("", ""))
+            .serviceTask("task1", b -> b.zeebeTaskType("type1").zeebeTaskHeader("key", testValue))
             .endEvent("end")
             .moveToActivity("task1")
-            .serviceTask("task2", b -> b.zeebeTaskType("type2").zeebeTaskHeader(null, null))
+            .serviceTask("task2", b -> b.zeebeTaskType("type2").zeebeTaskHeader(testValue, "value"))
+            .connectTo("end")
+            .moveToActivity("task1")
+            .serviceTask(
+                "task3", b -> b.zeebeTaskType("type3").zeebeTaskHeader(testValue, testValue))
             .connectTo("end")
             .done();
-    final long deploymentKey = testClient.deploy(model);
-    testClient.receiveFirstDeploymentEvent(DeploymentIntent.CREATED, deploymentKey);
 
     // when
+    final long deploymentKey = testClient.deploy(model);
+    testClient.receiveFirstDeploymentEvent(DeploymentIntent.CREATED, deploymentKey);
     testClient.createWorkflowInstance("process");
 
     // then
@@ -195,6 +208,11 @@ public class ActivityTest {
     final JobRecordValue secondJob =
         testClient.receiveJobs().withType("type2").getFirst().getValue();
     assertThat(secondJob.getCustomHeaders()).isEmpty();
+    testClient.completeJobOfType("type2");
+
+    final JobRecordValue thirdJob =
+        testClient.receiveJobs().withType("type3").getFirst().getValue();
+    assertThat(thirdJob.getCustomHeaders()).isEmpty();
   }
 
   private void shouldUnsubscribeFromBoundaryEventTrigger(

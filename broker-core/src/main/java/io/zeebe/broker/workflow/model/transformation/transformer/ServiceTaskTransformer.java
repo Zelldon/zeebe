@@ -90,15 +90,14 @@ public class ServiceTaskTransformer implements ModelElementTransformer<ServiceTa
               .collect(Collectors.toList());
 
       if (validHeaders.size() < taskHeaders.getHeaders().size()) {
-        LOG.warn("Found task headers with no key or value. Ignoring");
+        LOG.warn(
+            "Ignoring invalid headers for task '{}'. Must have non-empty key and value.",
+            element.getName());
       }
 
-      if (validHeaders != null && !validHeaders.isEmpty()) {
+      if (!validHeaders.isEmpty()) {
         final DirectBuffer encodedHeaders = encode(validHeaders);
         serviceTask.setEncodedHeaders(encodedHeaders);
-
-      } else {
-        LOG.warn("No valid headers defined in taskHeader element.");
       }
     }
   }
